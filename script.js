@@ -40,3 +40,7 @@ document.addEventListener('touchend', () => {
   isActive = false;
   mask.classList.remove('active');
 });
+
+// 🚫 Evitar doble clic o zoom táctil
+document.addEventListener('dblclick', e => e.preventDefault());
+document.addEventListener('gesturestart', e => e.preventDefault());

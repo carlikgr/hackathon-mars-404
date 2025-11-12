@@ -3,9 +3,10 @@ html, body {
   padding: 0;
   height: 100%;
   overflow: hidden;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Courier Prime', monospace;
   background: #000;
   color: #fff;
+  touch-action: none; /* evita el zoom en móviles */
 }
 
 .container {
@@ -15,9 +16,10 @@ html, body {
   background: url('https://ik.imagekit.io/kaotos/codigorathon/images.webp?updatedAt=1762970777075') no-repeat center center / cover;
   overflow: hidden;
   cursor: crosshair;
+  user-select: none;
 }
 
-/* Texto del error (detrás del fondo oscuro) */
+/* Texto del error (detrás de la máscara) */
 .text {
   position: absolute;
   top: 50%;
@@ -25,8 +27,9 @@ html, body {
   transform: translate(-50%, -50%);
   text-align: center;
   color: #fff;
-  z-index: 1; /* debajo de la máscara */
+  z-index: 1; /* detrás de la máscara */
   pointer-events: none;
+  text-shadow: 0 0 10px rgba(255,255,255,0.2);
 }
 
 .text h1 {
@@ -36,11 +39,32 @@ html, body {
 }
 
 .text p {
-  font-size: 1.5em;
+  font-size: 1.3em;
   margin-top: 0.5em;
 }
 
-/* Capa negra con "linterna" solo activa cuando se hace click */
+/* Texto de ayuda (encima de todo) */
+.hint {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  text-align: center;
+  font-size: 1.1em;
+  color: #fff;
+  opacity: 0.8;
+  z-index: 3; /* encima de todo */
+  pointer-events: none;
+  animation: fadeHint 2s ease-in-out infinite alternate;
+  letter-spacing: 1px;
+}
+
+/* Parpadeo suave */
+@keyframes fadeHint {
+  from { opacity: 0.8; }
+  to { opacity: 0.4; }
+}
+
+/* Capa negra con "linterna" */
 .mask {
   position: absolute;
   inset: 0;
