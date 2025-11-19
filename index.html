@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -13,23 +12,41 @@
       href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <!-- Fuente pixelada -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
 
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container" id="container">
       <img src="./assets/img/image-galaxy.png" alt="image-galaxy" />
-      <!-- Texto principal (detrás del fondo oscuro) -->
+
+      <!-- Texto principal detrás de la máscara -->
       <div class="text">
         <h1>404</h1>
         <p>Página no encontrada</p>
       </div>
 
       <!-- Texto guía visible encima -->
-      <div class="hint" id="hint">Encuentra marte y haz clic</div>
+      <div class="hint" id="hint">Encuentra Marte y mantén pulsado 6s</div>
 
-      <!-- Capa negra -->
+      <!-- Capa negra / máscara con linterna -->
       <div class="mask" id="mask"></div>
+
+      <!-- Barra de progreso -->
+      <div class="progress-wrap" id="progressWrap">
+        <div>Progreso:</div>
+        <div class="progress"><i id="bar"></i></div>
+        <div id="seconds">0s</div>
+      </div>
+
+      <!-- MARTE objetivo (invisible salvo con linterna) -->
+      <div id="marte">
+        <img src="./assets/img/marte.png" alt="Imagen Marte" />
+      </div>
     </div>
 
     <script src="script.js"></script>
