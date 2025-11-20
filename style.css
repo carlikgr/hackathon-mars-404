@@ -1,55 +1,13 @@
-html,
-body {
-}
-@keyframes fadeHint {
-  from {
-    opacity: 0.8;
-  }
-  to {
-    opacity: 0.4;
-  }
-}
-
-/* Texto */
-.text {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  text-align: center;
-  color: white;
-
-  font-family: "Press Start 2P", monospace; /* fuente pixelada */
-  text-rendering: optimizeLegibility;
-}
-.text h1 {
+html, body {
   margin: 0;
-  font-size: 6vmax;
-  font-family: "Press Start 2P", monospace; /* fuente pixelada */
-  text-rendering: optimizeLegibility;
-}
-.text p {
-  margin: 0;
-  font-size: 2vmax;
-  font-family: "Press Start 2P", monospace; /* fuente pixelada */
-  text-rendering: optimizeLegibility;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: black;
+  font-family: "Press Start 2P", monospace;
+  touch-action: none;
 }
 
-.hint {
-  position: absolute;
-  top: 5%;
-  color: white;
-  z-index: 1000;
-  width: 100%;
-  text-align: center;
-  font-size: 14px;
-  font-family: Arial, sans-serif;
-  animation: fadeHint 1.5s infinite alternate;
-  font-family: "Press Start 2P", monospace; /* fuente pixelada */
-  text-rendering: optimizeLegibility;
-}
 .container {
   position: relative;
   width: 100vw;
@@ -57,18 +15,47 @@ body {
   overflow: hidden;
 }
 
-.container img {
+.background {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
+
+/* Texto principal */
+.text {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+}
+.text h1 { margin: 0; font-size: 6vmax; }
+.text p { margin: 0; font-size: 2vmax; }
+
+/* Hint */
+.hint {
+  position: absolute;
+  top: 5%;
+  width: 100%;
+  text-align: center;
+  color: white;
+  z-index: 20;
+  font-size: 12px;
+  animation: fadeHint 1.5s infinite alternate;
+}
+@keyframes fadeHint {
+  from { opacity: 0.85; }
+  to   { opacity: 0.40; }
+}
+
+/* Mascara / linterna */
 .mask {
   position: absolute;
   inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: #000;
+  z-index: 5;
+  background: black;
   -webkit-mask-image: radial-gradient(
     circle 140px at var(--x, 50%) var(--y, 50%),
     transparent 0%,
@@ -82,32 +69,31 @@ body {
   transition: opacity 0.3s ease;
 }
 
+/* Cursor linterna */
 .cursor {
   position: absolute;
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  pointer-events: none;
+  border: 2px solid rgba(255,255,255,0.5);
   transform: translate(-50%, -50%);
-  mix-blend-mode: screen;
-  z-index: 4;
+  pointer-events: none;
+  z-index: 10;
   display: none;
 }
-.cursor.visible {
-  display: block;
-}
 
+/* Barra de progreso */
 .progress-wrap {
   position: fixed;
-  z-index: 5;
+  z-index: 20;
   left: 50%;
   bottom: 80px;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.55);
   padding: 6px 10px;
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 12px;
+
   display: flex;
   align-items: center;
   gap: 8px;
@@ -116,38 +102,80 @@ body {
 .progress {
   width: 64px;
   height: 8px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.25);
   border-radius: 6px;
   overflow: hidden;
 }
-.progress > i {
+.progress i {
   display: block;
   height: 100%;
   width: 0%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 0, 0, 0.9),
-    rgba(255, 100, 50, 0.95)
-  );
-  border-radius: 6px;
+  background: linear-gradient(90deg, #ff0000, #ff8330);
+}
+
+/* contenedor planetas random */
+#planets {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.planet {
+  position: absolute;
+  pointer-events: none;
+}
+.planet img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 #marte {
   position: absolute;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  /* background: #d33; */
-  top: 50%;
-  left: 70%;
+  width: 110px;
+  height: 110px;
+  top: 25%;
+  left: 78%;
   transform: translate(-50%, -50%);
-  /* box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); */
   z-index: 1;
 }
 
 #marte img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* hace que la imagen llene el contenedor recortando lo necesario */
+  object-fit: contain;
   display: block;
+}
+
+#aliensRain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.alien {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  user-select: none;
+  pointer-events: none;
+  object-fit: contain;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  from {
+    transform: translateY(-120px) rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(120vh) rotate(360deg);
+    opacity: 0.8;
+  }
 }

@@ -1,54 +1,54 @@
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <title>Error 404 - Página no encontrada</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Error 404 - Página no encontrada</title>
 
-    <!-- Fuente Google: Courier Prime -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Fuente pixelada -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="container" id="container">
-      <img src="./assets/img/image-galaxy.png" alt="image-galaxy" />
+  <link rel="stylesheet" href="style.css" />
+</head>
 
-      <!-- Texto principal detrás de la máscara -->
-      <div class="text">
-        <h1>404</h1>
-        <p>Página no encontrada</p>
-      </div>
+<body>
+  <div class="container" id="container">
 
-      <!-- Texto guía visible encima -->
-      <div class="hint" id="hint">Encuentra Marte y mantén pulsado 6s</div>
+    <!-- Fondo galaxia -->
+    <img src="./assets/img/fondo_galaxia.png" class="background" alt="Galaxia" />
 
-      <!-- Capa negra / máscara con linterna -->
-      <div class="mask" id="mask"></div>
-
-      <!-- Barra de progreso -->
-      <div class="progress-wrap" id="progressWrap">
-        <div>Progreso:</div>
-        <div class="progress"><i id="bar"></i></div>
-        <div id="seconds">0s</div>
-      </div>
-
-      <!-- MARTE objetivo (invisible salvo con linterna) -->
-      <div id="marte">
-        <img src="./assets/img/marte.png" alt="Imagen Marte" />
-      </div>
+    <!-- Texto principal -->
+    <div class="text">
+      <h1>404</h1>
+      <p>Página no encontrada</p>
     </div>
 
-    <script src="script.js"></script>
-  </body>
+    <!-- Indicador -->
+    <div class="hint" id="hint">Encuentra Marte y mantén pulsado 6s</div>
+
+    <!-- Capa negra + linterna -->
+    <div class="mask" id="mask"></div>
+
+    <!-- Barra progreso -->
+    <div class="progress-wrap" id="progressWrap">
+      <div>Progreso:</div>
+      <div class="progress"><i id="bar"></i></div>
+      <div id="seconds">0s</div>
+    </div>
+
+    <!-- CONTENEDOR de planetas aleatorios -->
+    <div id="planets"></div>
+
+    <!-- MARTE (el planeta objetivo) -->
+    <div id="marte">
+      <img src="./assets/img/marte.png" alt="Marte">
+    </div>
+
+  </div>
+  
+  <div id="aliensRain"></div>
+
+  <script src="script.js"></script>
+</body>
 </html>
