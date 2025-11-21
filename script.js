@@ -8,6 +8,7 @@ document.body.appendChild(cursor);
 
 const marte = document.getElementById("marte");
 const planetsContainer = document.getElementById("planets");
+
 const progressWrap = document.getElementById("progressWrap");
 const bar = document.getElementById("bar");
 const secondsLabel = document.getElementById("seconds");
@@ -20,7 +21,19 @@ const HOLD_TIME = 6;
 let found = false;
 
 /* ---------------------------
-   GENERAR PLANETAS RANDOM RESPONSIVE SIN PISAR EL TEXTO
+   UTILITY: INTERSECCIÓN RECTÁNGULOS
+----------------------------*/
+function intersects(r1, r2) {
+  return !(
+    r2.left > r1.right ||
+    r2.right < r1.left ||
+    r2.top > r1.bottom ||
+    r2.bottom < r1.top
+  );
+}
+
+/* ---------------------------
+   GENERAR PLANETAS RESPONSIVOS + ANTI-COLISIÓN CON EL TÍTULO
 ----------------------------*/
 const PLANET_IMAGES = [
   "mercurio.png",
@@ -31,18 +44,15 @@ const PLANET_IMAGES = [
   "pluton.png",
 ];
 
-let planets = [];
-const textArea = document.querySelector(".text"); // área a evitar
-
 function createPlanets() {
   planetsContainer.innerHTML = "";
-  planets = [];
 
-  // Ajustamos tamaño mínimo según ancho de pantalla (para mobile)
-  const MIN_SIZE = window.innerWidth < 500 ? 10 : 8;  // vmin
-  const MAX_SIZE = window.innerWidth < 500 ? 18 : 15; // vmin
+  // Rectángulo donde NO pueden aparecer
+  const textRect = document.querySelector(".text").getBoundingClientRect();
 
-  const textRect = textArea.getBoundingClientRect();
+  // Tamaños seguros según pantalla
+  const MIN_PX = window.innerWidth < 500 ? 60 : 80;
+  const MAX_PX = window.innerWidth < 500 ? 110 : 150;
 
   PLANET_IMAGES.forEach((name) => {
     const planet = document.createElement("div");
@@ -52,91 +62,32 @@ function createPlanets() {
     img.src = "./assets/img/planets/" + name;
     planet.appendChild(img);
 
-    // Tamaño aleatorio
-    const size = Math.random() * (MAX_SIZE - MIN_SIZE) + MIN_SIZE;
-    planet.dataset.size = size;
-    planet.style.width = size + "vmin";
-    planet.style.height = size + "vmin";
+    const size = Math.random() * (MAX_PX - MIN_PX) + MIN_PX;
+    planet.style.width = size + "px";
+    planet.style.height = size + "px";
 
-    let left, top, planetRect;
-
-    // Generamos posición aleatoria, pero evitando el área del texto
+    let x, y, rect;
     let attempts = 0;
-    do {
-      left = Math.random() * 80 + 10; // en vw
-      top = Math.random() * 80 + 10;  // en vh
-      planet.style.left = left + "vw";
-      planet.style.top = top + "vh";
-      planetRect = planet.getBoundingClientRect();
-      attempts++;
-      // Evitamos pisar el texto o pasarnos de la pantalla
-    } while (
-      intersects(planetRect, textRect) &&
-      attempts < 50
-    );
 
-    planet.dataset.left = left;
-    planet.dataset.top = top;
+    do {
+      x = Math.random() * (window.innerWidth - size);
+      y = Math.random() * (window.innerHeight - size);
+
+      planet.style.left = x + "px";
+      planet.style.top = y + "px";
+
+      rect = planet.getBoundingClientRect();
+      attempts++;
+    } while (intersects(rect, textRect) && attempts < 80);
 
     planetsContainer.appendChild(planet);
-    planets.push(planet);
   });
 }
 
-// Función para detectar intersección entre dos rectángulos
-function intersects(r1, r2) {
-  return !(
-    r2.left > r1.right ||
-    r2.right < r1.left ||
-    r2.top > r1.bottom ||
-    r2.bottom < r1.top
-  );
-}
-
-// Recalcular planetas al cambiar tamaño de ventana
-function resizePlanets() {
-  const MIN_SIZE = window.innerWidth < 500 ? 10 : 8;  // vmin
-  const MAX_SIZE = window.innerWidth < 500 ? 18 : 15; // vmin
-
-  const textRect = textArea.getBoundingClientRect();
-
-  planets.forEach((planet) => {
-    const size = planet.dataset.size;
-    planet.style.width = size + "vmin";
-    planet.style.height = size + "vmin";
-
-    let left = planet.dataset.left;
-    let top = planet.dataset.top;
-
-    let planetRect = planet.getBoundingClientRect();
-
-    // Si intersecta con texto, generar nueva posición
-    let attempts = 0;
-    while (intersects(planetRect, textRect) && attempts < 50) {
-      left = Math.random() * 80 + 10;
-      top = Math.random() * 80 + 10;
-      planet.style.left = left + "vw";
-      planet.style.top = top + "vh";
-      planetRect = planet.getBoundingClientRect();
-      attempts++;
-    }
-
-    planet.dataset.left = left;
-    planet.dataset.top = top;
-
-    planet.style.left = left + "vw";
-    planet.style.top = top + "vh";
-  });
-}
-
-// Crear planetas iniciales
 createPlanets();
 
-// Evento resize
-window.addEventListener("resize", resizePlanets);
-
 /* ---------------------------
-   LINTERNA / ACTUALIZAR MÁSCARA
+   LINTERNA (SEGUIMIENTO CURSOR)
 ----------------------------*/
 function setMask(x, y) {
   mask.style.setProperty("--x", x + "px");
@@ -152,7 +103,7 @@ function tick() {
 tick();
 
 /* ---------------------------
-   DETECTAR SI APUNTAMOS A MARTE
+   DETECTAR SI EL PUNTERO ESTÁ SOBRE MARTE
 ----------------------------*/
 function isOverMarte(x, y) {
   const r = marte.getBoundingClientRect();
@@ -164,6 +115,7 @@ function isOverMarte(x, y) {
 ----------------------------*/
 function startHold() {
   if (found) return;
+
   if (isOverMarte(pointerX, pointerY) && holdStart === null) {
     holdStart = performance.now();
     updateHold();
@@ -200,7 +152,43 @@ function updateHold() {
 }
 
 /* ---------------------------
-   AL TERMINAR LOS 6s / REVELAR PÁGINA
+   LLUVIA DE ALIENS
+----------------------------*/
+function spawnAliensRain() {
+  const aliensContainer = document.getElementById("aliensRain");
+  const total = 40;
+
+  for (let i = 0; i < total; i++) {
+    const alien = document.createElement("img");
+    alien.src = "./assets/img/alien.png";
+    alien.classList.add("alien");
+
+    alien.style.left = Math.random() * 100 + "vw";
+
+    // Tamaños diferentes según pantalla
+    let size;
+    if (window.innerWidth > 768) {
+      // Desktop → aliens grandes
+      size = 90 + Math.random() * 70; // 90–160px
+    } else {
+      // Mobile
+      size = 50 + Math.random() * 40; // 50–90px
+    }
+
+    alien.style.width = size + "px";
+    alien.style.height = size + "px";
+
+    alien.style.animationDuration = 2 + Math.random() * 3 + "s";
+    alien.style.animationDelay = Math.random() * 1.5 + "s";
+
+    aliensContainer.appendChild(alien);
+
+    setTimeout(() => alien.remove(), 6000);
+  }
+}
+
+/* ---------------------------
+   REVELAR PÁGINA AL COMPLETAR 6s
 ----------------------------*/
 function revealPage() {
   found = true;
@@ -211,35 +199,6 @@ function revealPage() {
 
   // Activar lluvia de aliens
   spawnAliensRain();
-}
-
-/* ---------------------------
-   LLUVIA DE ALIENS
-----------------------------*/
-function spawnAliensRain() {
-  const aliensContainer = document.getElementById("aliensRain");
-  const total = 40; // número de aliens
-
-  for (let i = 0; i < total; i++) {
-    const alien = document.createElement("img");
-    alien.src = "./assets/img/alien.png"; // ruta correcta
-    alien.classList.add("alien");
-
-    alien.style.left = Math.random() * 100 + "vw";
-    const size = 40 + Math.random() * 60; // tamaño aleatorio
-    alien.style.width = size + "px";
-    alien.style.height = size + "px";
-
-    alien.style.animationDuration = 2 + Math.random() * 3 + "s"; // velocidad aleatoria
-    alien.style.animationDelay = Math.random() * 1.5 + "s"; // delay aleatorio
-
-    aliensContainer.appendChild(alien);
-
-    // eliminar después de caer
-    setTimeout(() => {
-      alien.remove();
-    }, 6000);
-  }
 }
 
 /* ---------------------------
@@ -284,4 +243,11 @@ function onPointerUp() {
     },
     { passive: false }
   );
+});
+
+/* ---------------------------
+   REGENERAR PLANETAS AL RESIZE
+----------------------------*/
+window.addEventListener("resize", () => {
+  createPlanets();
 });
